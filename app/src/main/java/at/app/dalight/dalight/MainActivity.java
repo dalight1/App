@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
 
@@ -15,6 +14,7 @@ public class MainActivity extends Activity {
 
     //Layout Elements
     private FloatingActionButton addButton;
+    private Boolean mode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +34,7 @@ public class MainActivity extends Activity {
                 DoIt(v);
             }
         });
+        mode = new Boolean(false);
 
     }
     @Override
@@ -59,9 +60,16 @@ public class MainActivity extends Activity {
     }
 
     public void DoIt(View v){
-        addButton.setFloatingActionButtonDrawable(getResources().getDrawable(R.drawable.ic_play));
-        Toast.makeText(getApplicationContext(),"Jetzt is ein neues Logo hier!", Toast.LENGTH_LONG).show();
-
+        if (!mode){
+            addButton.setFloatingActionButtonDrawable(getResources().getDrawable(R.drawable.ic_play));
+            Toast.makeText(getApplicationContext(),"Der Play Modus ist aktiv!", Toast.LENGTH_SHORT).show();
+            mode = true;
+        }
+        else{
+            addButton.setFloatingActionButtonDrawable(getResources().getDrawable(R.drawable.ic_add));
+            Toast.makeText(getApplicationContext(),"Der Add Modus ist aktiv!", Toast.LENGTH_SHORT).show();
+            mode = false;
+        }
     }
 
 }
