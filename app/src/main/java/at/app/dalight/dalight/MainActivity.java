@@ -6,6 +6,9 @@ import android.os.Bundle;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.View;
+import android.widget.Toast;
 
 
 public class MainActivity extends Activity {
@@ -24,9 +27,15 @@ public class MainActivity extends Activity {
                 .withGravity(Gravity.BOTTOM | Gravity.RIGHT)
                 .withMargins(0, 0, 16, 16)
                 .create();
+
+        addButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DoIt(v);
+            }
+        });
+
     }
-
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -48,4 +57,11 @@ public class MainActivity extends Activity {
 
         return super.onOptionsItemSelected(item);
     }
+
+    public void DoIt(View v){
+        addButton.setFloatingActionButtonDrawable(getResources().getDrawable(R.drawable.ic_play));
+        Toast.makeText(getApplicationContext(),"Jetzt is ein neues Logo hier!", Toast.LENGTH_LONG).show();
+
+    }
+
 }
