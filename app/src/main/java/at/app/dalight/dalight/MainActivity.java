@@ -1,17 +1,30 @@
 package at.app.dalight.dalight;
 
 import android.app.Activity;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 
 
 public class MainActivity extends Activity {
 
+    //Layout Elements
+    private FloatingActionButton addButton;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        addButton = new FloatingActionButton.Builder(this)
+                .withDrawable(getResources().getDrawable(R.drawable.ic_launcher))
+                .withButtonColor(Color.WHITE)
+                .withGravity(Gravity.BOTTOM | Gravity.RIGHT)
+                .withMargins(0, 0, 32, 32)
+                .withButtonSize(100)
+                .create();
     }
 
 
