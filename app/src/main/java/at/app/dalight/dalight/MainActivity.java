@@ -19,11 +19,10 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
 
         addButton = new FloatingActionButton.Builder(this)
-                .withDrawable(getResources().getDrawable(R.drawable.ic_launcher))
+                .withDrawable(getResources().getDrawable(R.drawable.ic_add))
                 .withButtonColor(Color.WHITE)
                 .withGravity(Gravity.BOTTOM | Gravity.RIGHT)
-                .withMargins(0, 0, 32, 32)
-                .withButtonSize(100)
+                .withMargins(0, 0, 16, 16)
                 .create();
     }
 
