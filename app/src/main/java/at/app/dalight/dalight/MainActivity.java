@@ -1,7 +1,6 @@
 package at.app.dalight.dalight;
 
 import android.app.Activity;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.Menu;
@@ -23,7 +22,7 @@ public class MainActivity extends Activity {
 
         addButton = new FloatingActionButton.Builder(this)
                 .withDrawable(getResources().getDrawable(R.drawable.ic_add))
-                .withButtonColor(Color.WHITE)
+                .withButtonColor(getResources().getColor(R.color.Orange))
                 .withGravity(Gravity.BOTTOM | Gravity.RIGHT)
                 .withMargins(0, 0, 16, 16)
                 .create();
@@ -34,7 +33,7 @@ public class MainActivity extends Activity {
                 DoIt(v);
             }
         });
-        mode = new Boolean(false);
+        mode = false;
 
     }
     @Override
