@@ -6,26 +6,21 @@ package at.app.dalight.dalight;
 public class Device {
 
     private String name;
-    private int id;
+    private int iconId;
     private int adress;
-
-    public String getType() {
-        return type;
-    }
-
     private String type;
 
 
-    public Device(String name, int id, int adress, String type) {
+    public Device(String name, int iconId, int adress, String type) {
         this.name = name;
-        this.id = id;
+        this.iconId = iconId;
         this.adress = adress;
         this.type = type;
     }
 
-    public Device(String name, int id, int adress) {
+    public Device(String name, int iconId, int adress) {
         this.name = name;
-        this.id = id;
+        this.iconId = iconId;
         this.adress = adress;
         this.type = "invalid Type";
     }
@@ -34,12 +29,16 @@ public class Device {
         return name;
     }
 
-    public int getId() {
-        return id;
+    public int getIconId() {
+        return iconId;
     }
 
     public int getAdress() {
         return adress;
+    }
+
+    public String getType() {
+        return type;
     }
 
 }

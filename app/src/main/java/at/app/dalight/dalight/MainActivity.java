@@ -132,7 +132,7 @@ public class MainActivity extends Activity {
 
             //Fill the View
             ImageView imageView = (ImageView) itemView.findViewById(R.id.itemImage);
-            imageView.setImageResource(currentDevice.getId());
+            imageView.setImageResource(currentDevice.getIconId());
 
             //Name
             TextView nameText = (TextView) itemView.findViewById(R.id.txtName);
