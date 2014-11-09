@@ -6,8 +6,10 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -50,11 +52,30 @@ public class MainActivity extends Activity {
         });
         mode = false;
 
-        populateListView();
+        populateDeviceList();
+        populateListViewDevice();
+        //populateListView();
         registerClickCallback();
 
     }
 
+    private void populateListViewDevice() {
+        ArrayAdapter<Device> adapter = new MyListAdapter();
+        list.setAdapter(adapter);
+
+
+    }
+
+    private void populateDeviceList() {
+       myDevices.add(new Device("Name1", R.drawable.ic_launcher,15));
+       myDevices.add(new Device("Name2", R.drawable.ic_launcher,16));
+       myDevices.add(new Device("Name3", R.drawable.ic_launcher,1));
+       myDevices.add(new Device("Name4", R.drawable.ic_launcher,10));
+       myDevices.add(new Device("Name5", R.drawable.ic_launcher,2));
+       myDevices.add(new Device("Name6", R.drawable.ic_launcher,4));
+       myDevices.add(new Device("Name7", R.drawable.ic_launcher,11));
+       myDevices.add(new Device("Name8", R.drawable.ic_launcher,0));
+    }
 
 
     @Override
@@ -94,20 +115,36 @@ public class MainActivity extends Activity {
 
 
 
-    private void populateListView(){
-        //Create a List of Items
-        String[] myitems = {"eins", "zwei", "drei"};
+    private class MyListAdapter extends ArrayAdapter<Device> {
+        public MyListAdapter(){
+            super(MainActivity.this ,R.layout.item_device,myDevices );
+        }
 
-        //Build Adapter
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            //Make shure we have a view to work with
+            View itemView = convertView;
+            if (itemView == null){
+                itemView = getLayoutInflater().inflate(R.layout.item_device, parent,false);
+            }
+            //Find the Device to Work with
+            Device currentDevice = myDevices.get(position);
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(
-                this,           //Context for the activity
-                R.layout.items, //Layout to use (create)
-                myitems);       //Items to be displayed
+            //Fill the View
+            ImageView imageView = (ImageView) itemView.findViewById(R.id.itemImage);
+            imageView.setImageResource(currentDevice.getId());
 
-        //Configure the ListView
-        //ListView list = (ListView) findViewById(R.id.listViewMain);
-        list.setAdapter(adapter);
+            //Name
+            TextView nameText = (TextView) itemView.findViewById(R.id.txtName);
+            nameText.setText(currentDevice.getName());
+
+            //Adress
+            TextView adressText = (TextView) itemView.findViewById(R.id.txtAdress);
+            adressText.setText("Adress: " + currentDevice.getAdress()); //returnValue is a integer
+
+            return itemView;
+            //return super.getView(position, convertView, parent);
+        }
 
     }
     private void registerClickCallback() {
@@ -115,11 +152,8 @@ public class MainActivity extends Activity {
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                TextView textView = (TextView) view;
-                String message = "You Clicked " +
-                        position +
-                        " which ist string " +
-                        textView.getText().toString();
+                Device clickedDevive = myDevices.get(position);
+                String message = "You Clicked " + position + " which ist string " + clickedDevive.getName();
                 Toast.makeText(MainActivity.this, message,Toast.LENGTH_SHORT).show();
             }
         });
