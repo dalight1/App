@@ -42,7 +42,7 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="State is shown here"
         android:textColor="@color/White"
-        android:id="@+id/txtState"
+        android:id="@+id/txtType"
         android:layout_alignBottom="@+id/itemImage"
         android:layout_alignParentEnd="true" />
 </RelativeLayout>

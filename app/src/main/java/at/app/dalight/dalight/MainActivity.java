@@ -67,10 +67,10 @@ public class MainActivity extends Activity {
     }
 
     private void populateDeviceList() {
-       myDevices.add(new Device("Name1", R.drawable.ic_launcher,15));
+       myDevices.add(new Device("Name1", R.drawable.ic_launcher,15,"Typ1"));
        myDevices.add(new Device("Name2", R.drawable.ic_launcher,16));
-       myDevices.add(new Device("Name3", R.drawable.ic_launcher,1));
-       myDevices.add(new Device("Name4", R.drawable.ic_launcher,10));
+       myDevices.add(new Device("Name3", R.drawable.ic_launcher,1,"Typ1"));
+       myDevices.add(new Device("Name4", R.drawable.ic_launcher,10,"Typ1"));
        myDevices.add(new Device("Name5", R.drawable.ic_launcher,2));
        myDevices.add(new Device("Name6", R.drawable.ic_launcher,4));
        myDevices.add(new Device("Name7", R.drawable.ic_launcher,11));
@@ -141,6 +141,10 @@ public class MainActivity extends Activity {
             //Adress
             TextView adressText = (TextView) itemView.findViewById(R.id.txtAdress);
             adressText.setText("Adress: " + currentDevice.getAdress()); //returnValue is a integer
+
+            //Type
+            TextView typeText = (TextView) itemView.findViewById(R.id.txtType);
+            typeText.setText("Type: " + currentDevice.getType()); //returnValue is a integer
 
             return itemView;
             //return super.getView(position, convertView, parent);
