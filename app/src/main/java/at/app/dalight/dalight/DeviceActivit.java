@@ -1,8 +1,6 @@
 package at.app.dalight.dalight;
 
 import android.app.Activity;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -11,14 +9,14 @@ import android.widget.Button;
 import android.widget.Toast;
 
 
-public class EditDalight extends Activity implements View.OnClickListener {
+public class DeviceActivit extends Activity implements View.OnClickListener {
 
     private Button btnback;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_edit_dalight);
+        setContentView(R.layout.activity_device);
 
         btnback = (Button) findViewById(R.id.btnback);
         btnback.setOnClickListener(this);
@@ -30,8 +28,8 @@ public class EditDalight extends Activity implements View.OnClickListener {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_edit_dalight, menu);
-        setContentView(R.layout.activity_edit_dalight);
+        getMenuInflater().inflate(R.menu.menu_device, menu);
+        setContentView(R.layout.activity_device);
         return true;
     }
 
@@ -57,7 +55,7 @@ public class EditDalight extends Activity implements View.OnClickListener {
         int ce = v.getId(); //Click Element
 
         String message = "Sollte geschlossen werden! ";
-        Toast.makeText(EditDalight.this, message,Toast.LENGTH_SHORT).show();
+        Toast.makeText(DeviceActivit.this, message,Toast.LENGTH_SHORT).show();
 
         if(ce == R.id.btnback)
         {

@@ -17,7 +17,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="at.app.dalight.dalight.EditDalight"
+            android:name=".DeviceActivit"
             android:label="@string/title_activity_edit_dalight" >
         </activity>
     </application>

@@ -13,7 +13,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +30,7 @@ public class MainActivity extends Activity {
     //Extended ListView
     private List<Device> myDevices = new ArrayList<Device>();
 
+    //Standard Methods -----------------------------------------------------------------------------
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,33 +48,16 @@ public class MainActivity extends Activity {
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DoIt(v);
+                addButtonClicked(v);
             }
         });
         mode = false;
 
         populateDeviceList(); //ArrayList fill up
         populateListViewDevice(); //Fill up ListView with the ArrayList
-        registerClickCallback(); // onclick Listener für die ListView
+        deviceListClick(); // onclick Listener für die ListView
 
     }
-
-    private void populateListViewDevice() {
-        ArrayAdapter<Device> adapter = new DevicesListAdapter(MainActivity.this,myDevices);
-        deviceListView.setAdapter(adapter);
-    }
-
-    private void populateDeviceList() {
-       myDevices.add(new Device("Name1", R.drawable.ic_launcher,15,"Typ1"));
-       myDevices.add(new Device("Name2", R.drawable.ic_launcher,16));
-       myDevices.add(new Device("Name3", R.drawable.ic_launcher,1,"Typ1"));
-       myDevices.add(new Device("Name4", R.drawable.ic_launcher,10,"Typ1"));
-       myDevices.add(new Device("Name5", R.drawable.ic_launcher,2));
-       myDevices.add(new Device("Name6", R.drawable.ic_launcher,4));
-       myDevices.add(new Device("Name7", R.drawable.ic_launcher,11));
-       myDevices.add(new Device("Name8", R.drawable.ic_launcher,0));
-    }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -97,16 +80,27 @@ public class MainActivity extends Activity {
 
         return super.onOptionsItemSelected(item);
     }
+    //END of Standard Methods ----------------------------------------------------------------------
 
-    public void DoIt(View v){
+    private void populateListViewDevice() {
+        ArrayAdapter<Device> adapter = new DevicesListAdapter();
+        deviceListView.setAdapter(adapter);
+    }
+    private void populateDeviceList() {
+        myDevices.add(new Device("Name1", R.drawable.ic_launcher,15,"Typ1"));
+        myDevices.add(new Device("Name2", R.drawable.ic_launcher,16));
+        myDevices.add(new Device("Name3", R.drawable.ic_launcher,1,"Typ1"));
+        myDevices.add(new Device("Name4", R.drawable.ic_launcher,10,"Typ1"));
+        myDevices.add(new Device("Name5", R.drawable.ic_launcher,2));
+        myDevices.add(new Device("Name6", R.drawable.ic_launcher,4));
+        myDevices.add(new Device("Name7", R.drawable.ic_launcher,11));
+        myDevices.add(new Device("Name8", R.drawable.ic_launcher,0));
+    }
+    private void addButtonClicked(View v){
 
         myDevices.add(new Device("Check this out", R.drawable.ic_launcher,15,"Hero!"));
         populateListViewDevice();
-
-
-
-        myDevices.add(new Device("Hinzugefügt", R.drawable.ic_launcher,15,"Typ1"));
-
+        /*
         if (!mode){
             addButton.setFloatingActionButtonDrawable(getResources().getDrawable(R.drawable.ic_play));
             Toast.makeText(getApplicationContext(),"Der Play Modus ist aktiv!", Toast.LENGTH_SHORT).show();
@@ -116,13 +110,52 @@ public class MainActivity extends Activity {
             addButton.setFloatingActionButtonDrawable(getResources().getDrawable(R.drawable.ic_add));
             Toast.makeText(getApplicationContext(),"Der Add Modus ist aktiv!", Toast.LENGTH_SHORT).show();
             mode = false;
-        }
+        }*/
+    }
+    private void deviceListClick() {
+
+        //Todo Es muss verhindert werden dass bei jedem LongClick auch ein ButtonClick ausgeführt wird
+
+        deviceListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                /*
+                Device clickedDevive = myDevices.get(position);
+                String message = "You Clicked " + position + " which ist string " + clickedDevive.getName();
+                Toast.makeText(MainActivity.this, message, Toast.LENGTH_SHORT).show();*/
+
+                //Diese Aufraufe sind nur zum Löschen der Einträge
+
+                myDevices.remove(position);
+                populateListViewDevice();
+                return false;
+            }
+        });
+
+        deviceListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                /*
+                Device clickedDevive = myDevices.get(position);
+                String message = "You Clicked " + position + " which ist string " + clickedDevive.getName();
+                Toast.makeText(MainActivity.this, message,Toast.LENGTH_SHORT).show();*/
+
+                //Wechsel in die Edit Activity
+                Intent intent = new Intent(MainActivity.this, DeviceActivit.class);
+
+                startActivity(intent);
+
+                //Diese Aufraufe sind nur zum Löschen der Einträge
+                /*
+                myDevices.remove(position);
+                populateListViewDevice();*/
+            }
+        });
     }
 
-
-
-    private class MyListAdapter extends ArrayAdapter<Device> {
-        public MyListAdapter(){
+    //Helper Class----------------------------------------------------------------------------------
+    private class DevicesListAdapter extends ArrayAdapter<Device> {
+        public DevicesListAdapter(){
             super(MainActivity.this ,R.layout.item_device,myDevices );
         }
 
@@ -155,26 +188,6 @@ public class MainActivity extends Activity {
             return itemView;
             //return super.getView(position, convertView, parent);
         }
-
     }
-    private void registerClickCallback() {
-        //ListView deviceListView = (ListView) findViewById(R.id.listViewMain);
-        deviceListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Device clickedDevive = myDevices.get(position);
-                String message = "You Clicked " + position + " which ist string " + clickedDevive.getName();
-                Toast.makeText(MainActivity.this, message,Toast.LENGTH_SHORT).show();
 
-                //Wechsel in die Edit Activity
-                Intent intent = new Intent(MainActivity.this, EditDalight.class);
-                startActivity(intent);
-
-                //Diese Aufraufe sind nur zum Löschen der Einträge
-                /*
-                myDevices.remove(position);
-                populateListViewDevice();*/
-            }
-        });
-    }
 }
