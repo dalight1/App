@@ -16,6 +16,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name="at.app.dalight.dalight.EditDalight"
+            android:label="@string/title_activity_edit_dalight" >
+        </activity>
     </application>
 
 </manifest>

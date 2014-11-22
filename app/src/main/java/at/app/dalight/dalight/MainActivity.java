@@ -1,6 +1,7 @@
 package at.app.dalight.dalight;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.Menu;
@@ -101,6 +102,11 @@ public class MainActivity extends Activity {
     }
 
     public void DoIt(View v){
+
+        myDevices.add(new Device("Check this out", R.drawable.ic_launcher,15,"Hero!"));
+        populateListViewDevice();
+
+
         if (!mode){
             addButton.setFloatingActionButtonDrawable(getResources().getDrawable(R.drawable.ic_play));
             Toast.makeText(getApplicationContext(),"Der Play Modus ist aktiv!", Toast.LENGTH_SHORT).show();
@@ -159,6 +165,15 @@ public class MainActivity extends Activity {
                 Device clickedDevive = myDevices.get(position);
                 String message = "You Clicked " + position + " which ist string " + clickedDevive.getName();
                 Toast.makeText(MainActivity.this, message,Toast.LENGTH_SHORT).show();
+
+                //Wechsel in die Edit Activity
+                Intent intent = new Intent(MainActivity.this, EditDalight.class);
+                startActivity(intent);
+
+                //Diese Aufraufe sind nur zum Löschen der Einträge
+                /*
+                myDevices.remove(position);
+                populateListViewDevice();*/
             }
         });
     }
