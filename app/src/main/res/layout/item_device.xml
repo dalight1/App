@@ -48,6 +48,7 @@
         android:layout_alignBottom="@+id/itemImage"
         android:layout_alignParentEnd="true" />
 
+    <!-- Seperation Line between ListView Elements -->
     <View
         android:layout_width="match_parent"
         android:layout_height="0.2dp"
