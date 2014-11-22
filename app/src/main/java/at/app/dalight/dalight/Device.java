@@ -2,6 +2,7 @@ package at.app.dalight.dalight;
 
 /**
  * Created by Stephan on 09.11.2014.
+ * This class represents one Device at the DALI Bus
  */
 public class Device {
 

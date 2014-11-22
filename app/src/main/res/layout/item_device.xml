@@ -14,6 +14,7 @@
         android:maxWidth="80dp"
         android:minHeight="80dp"
         android:longClickable="false"
+        android:layout_marginTop="8dp"
         android:minWidth="80dp" />
 
     <TextView
@@ -24,6 +25,7 @@
         android:textColor="@color/White"
         android:id="@+id/txtName"
         android:layout_alignParentTop="true"
+        android:layout_marginTop="8dp"
         android:layout_toEndOf="@+id/itemImage" />
 
     <TextView
@@ -45,4 +47,13 @@
         android:id="@+id/txtType"
         android:layout_alignBottom="@+id/itemImage"
         android:layout_alignParentEnd="true" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.2dp"
+        android:background="@drawable/gradient"
+        android:layout_marginTop="8dp"
+        android:layout_below="@+id/itemImage"
+        android:layout_alignParentStart="true" />
+
 </RelativeLayout>

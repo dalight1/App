@@ -22,6 +22,7 @@ public class MainActivity extends Activity {
 
     //Layout Elements
     private FloatingActionButton addButton;
+    private FloatingActionButton scanButton;
     private Boolean mode;
 
     //List view: {views: items.xml}
@@ -51,6 +52,21 @@ public class MainActivity extends Activity {
                 addButtonClicked(v);
             }
         });
+
+        scanButton = new FloatingActionButton.Builder(this)
+                .withDrawable(getResources().getDrawable(R.drawable.ic_add))
+                .withButtonColor(getResources().getColor(R.color.BlanchedAlmond))
+                .withGravity(Gravity.TOP | Gravity.RIGHT)
+                .withMargins(0, 16, 16, 0)
+                .create();
+
+        scanButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addButtonClicked(v);
+            }
+        });
+
         mode = false;
 
         populateDeviceList(); //ArrayList fill up
