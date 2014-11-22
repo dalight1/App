@@ -1,14 +1,18 @@
 package at.app.dalight.dalight;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -96,6 +100,11 @@ public class MainActivity extends Activity {
 
     public void DoIt(View v){
 
+        myDevices.add(new Device("Check this out", R.drawable.ic_launcher,15,"Hero!"));
+        populateListViewDevice();
+
+
+
         myDevices.add(new Device("Hinzugefügt", R.drawable.ic_launcher,15,"Typ1"));
 
         if (!mode){
@@ -110,6 +119,44 @@ public class MainActivity extends Activity {
         }
     }
 
+
+
+    private class MyListAdapter extends ArrayAdapter<Device> {
+        public MyListAdapter(){
+            super(MainActivity.this ,R.layout.item_device,myDevices );
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            //Make shure we have a view to work with
+            View itemView = convertView;
+            if (itemView == null){
+                itemView = getLayoutInflater().inflate(R.layout.item_device, parent,false);
+            }
+            //Find the Device to Work with
+            Device currentDevice = myDevices.get(position);
+
+            //Fill the View
+            ImageView imageView = (ImageView) itemView.findViewById(R.id.itemImage);
+            imageView.setImageResource(currentDevice.getIconId());
+
+            //Name
+            TextView nameText = (TextView) itemView.findViewById(R.id.txtName);
+            nameText.setText(currentDevice.getName());
+
+            //Adress
+            TextView adressText = (TextView) itemView.findViewById(R.id.txtAdress);
+            adressText.setText("Adress: " + currentDevice.getAdress()); //returnValue is a integer
+
+            //Type
+            TextView typeText = (TextView) itemView.findViewById(R.id.txtType);
+            typeText.setText("Type: " + currentDevice.getType()); //returnValue is a integer
+
+            return itemView;
+            //return super.getView(position, convertView, parent);
+        }
+
+    }
     private void registerClickCallback() {
         //ListView deviceListView = (ListView) findViewById(R.id.listViewMain);
         deviceListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -117,10 +164,17 @@ public class MainActivity extends Activity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Device clickedDevive = myDevices.get(position);
                 String message = "You Clicked " + position + " which ist string " + clickedDevive.getName();
-                Toast.makeText(MainActivity.this, message, Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, message,Toast.LENGTH_SHORT).show();
+
+                //Wechsel in die Edit Activity
+                Intent intent = new Intent(MainActivity.this, EditDalight.class);
+                startActivity(intent);
+
+                //Diese Aufraufe sind nur zum Löschen der Einträge
+                /*
+                myDevices.remove(position);
+                populateListViewDevice();*/
             }
         });
-
     }
-
 }
