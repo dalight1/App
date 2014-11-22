@@ -6,12 +6,9 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -25,7 +22,7 @@ public class MainActivity extends Activity {
     private Boolean mode;
 
     //List view: {views: items.xml}
-    private ListView list;
+    private ListView deviceListView;
 
     //Extended ListView
     private List<Device> myDevices = new ArrayList<Device>();
@@ -35,7 +32,7 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        list = (ListView) findViewById(R.id.listViewMain);
+        deviceListView = (ListView) findViewById(R.id.listViewMain);
 
         addButton = new FloatingActionButton.Builder(this)
                 .withDrawable(getResources().getDrawable(R.drawable.ic_add))
@@ -52,18 +49,15 @@ public class MainActivity extends Activity {
         });
         mode = false;
 
-        populateDeviceList();
-        populateListViewDevice();
-        //populateListView();
-        registerClickCallback();
+        populateDeviceList(); //ArrayList fill up
+        populateListViewDevice(); //Fill up ListView with the ArrayList
+        registerClickCallback(); // onclick Listener für die ListView
 
     }
 
     private void populateListViewDevice() {
-        ArrayAdapter<Device> adapter = new MyListAdapter();
-        list.setAdapter(adapter);
-
-
+        ArrayAdapter<Device> adapter = new DevicesListAdapter(MainActivity.this,myDevices);
+        deviceListView.setAdapter(adapter);
     }
 
     private void populateDeviceList() {
@@ -101,6 +95,9 @@ public class MainActivity extends Activity {
     }
 
     public void DoIt(View v){
+
+        myDevices.add(new Device("Hinzugefügt", R.drawable.ic_launcher,15,"Typ1"));
+
         if (!mode){
             addButton.setFloatingActionButtonDrawable(getResources().getDrawable(R.drawable.ic_play));
             Toast.makeText(getApplicationContext(),"Der Play Modus ist aktiv!", Toast.LENGTH_SHORT).show();
@@ -113,53 +110,17 @@ public class MainActivity extends Activity {
         }
     }
 
-
-
-    private class MyListAdapter extends ArrayAdapter<Device> {
-        public MyListAdapter(){
-            super(MainActivity.this ,R.layout.item_device,myDevices );
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            //Make shure we have a view to work with
-            View itemView = convertView;
-            if (itemView == null){
-                itemView = getLayoutInflater().inflate(R.layout.item_device, parent,false);
-            }
-            //Find the Device to Work with
-            Device currentDevice = myDevices.get(position);
-
-            //Fill the View
-            ImageView imageView = (ImageView) itemView.findViewById(R.id.itemImage);
-            imageView.setImageResource(currentDevice.getIconId());
-
-            //Name
-            TextView nameText = (TextView) itemView.findViewById(R.id.txtName);
-            nameText.setText(currentDevice.getName());
-
-            //Adress
-            TextView adressText = (TextView) itemView.findViewById(R.id.txtAdress);
-            adressText.setText("Adress: " + currentDevice.getAdress()); //returnValue is a integer
-
-            //Type
-            TextView typeText = (TextView) itemView.findViewById(R.id.txtType);
-            typeText.setText("Type: " + currentDevice.getType()); //returnValue is a integer
-
-            return itemView;
-            //return super.getView(position, convertView, parent);
-        }
-
-    }
     private void registerClickCallback() {
-        //ListView list = (ListView) findViewById(R.id.listViewMain);
-        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        //ListView deviceListView = (ListView) findViewById(R.id.listViewMain);
+        deviceListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Device clickedDevive = myDevices.get(position);
                 String message = "You Clicked " + position + " which ist string " + clickedDevive.getName();
-                Toast.makeText(MainActivity.this, message,Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, message, Toast.LENGTH_SHORT).show();
             }
         });
+
     }
+
 }
