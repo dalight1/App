@@ -1,6 +1,8 @@
 package at.app.dalight.dalight;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -112,22 +114,11 @@ public class MainActivity extends Activity {
         }*/
     }
     private void deviceListClick() {
-
-        //Todo Es muss verhindert werden dass bei jedem LongClick auch ein ButtonClick ausgeführt wird
-
         deviceListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                /*
-                Device clickedDevive = myDevices.get(position);
-                String message = "You Clicked " + position + " which ist string " + clickedDevive.getName();
-                Toast.makeText(MainActivity.this, message, Toast.LENGTH_SHORT).show();*/
-
-                //Diese Aufraufe sind nur zum Löschen der Einträge
-
-                myDevices.remove(position);
-                populateListViewDevice();
-                return false;
+                deleteDeviceFromList(position);
+                return true; // return true, otherwise the second click Listener will be started
             }
         });
 
@@ -141,15 +132,25 @@ public class MainActivity extends Activity {
 
                 //Wechsel in die Edit Activity
                 Intent intent = new Intent(MainActivity.this, DeviceActivit.class);
-
                 startActivity(intent);
-
-                //Diese Aufraufe sind nur zum Löschen der Einträge
-                /*
-                myDevices.remove(position);
-                populateListViewDevice();*/
             }
         });
+    }
+    private void deleteDeviceFromList(final int position){
+        //Show Message Box to be sure that the Device will be deleted
+        Device clickedDevice = myDevices.get(position);
+        new AlertDialog.Builder(this)
+                .setMessage("Are you sure youz want deleting this Device: " + clickedDevice.getName() + " ?" )
+                .setTitle("Delete Device")
+                .setCancelable(true)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener(){
+                    public void onClick(DialogInterface dialog, int which) {
+                        myDevices.remove(position);
+                        populateListViewDevice();
+                    }
+                })
+                .setNegativeButton("No", null)//Do nothing on no
+                .show();
     }
 
     //Helper Class----------------------------------------------------------------------------------
