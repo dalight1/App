@@ -101,6 +101,10 @@ public class FloatingActionButton extends View {
         }
     }
 
+    public void moveFloatingButton(int xPos, int yPos){
+
+    }
+
     public boolean isHidden() {
         return mHidden;
     }
