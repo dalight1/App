@@ -91,28 +91,6 @@ public class MainActivity extends Activity {
         StrictMode.setThreadPolicy(policy);
     }
 
-    private void readStream(InputStream in) {
-        BufferedReader reader = null;
-        try {
-            reader = new BufferedReader(new InputStreamReader(in));
-            String line = "";
-            while ((line = reader.readLine()) != null) {
-                System.out.println(line);
-                Log.e("READ Stream",line);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            if (reader != null) {
-                try {
-                    reader.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -137,6 +115,30 @@ public class MainActivity extends Activity {
     //END of Standard Methods ----------------------------------------------------------------------
 
     //Test -----------------------------------------------------------------------------------------
+    private void readStream(InputStream in) {
+        BufferedReader reader = null;
+        try {
+            reader = new BufferedReader(new InputStreamReader(in));
+            String line = "";
+            while ((line = reader.readLine()) != null) {
+                //wird nur als Log Eintrag ausgegeben
+
+                //System.out.println(line);
+                Log.e("READ Stream",line);
+                //Todo muss als String zurückgegeben werden und weiterverarbeitet
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
     public boolean isNetworkAvailable() {
         ConnectivityManager cm = (ConnectivityManager)
                 getSystemService(Context.CONNECTIVITY_SERVICE);
