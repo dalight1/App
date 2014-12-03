@@ -2,9 +2,14 @@ package at.app.dalight.dalight;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.os.StrictMode;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -17,6 +22,15 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,6 +39,7 @@ public class MainActivity extends Activity {
 
     //Layout Elements
     private FloatingActionButton addButton;
+    private FloatingActionButton connectButton;
     private Boolean mode;
 
     //List view: {views: items.xml}
@@ -47,7 +62,6 @@ public class MainActivity extends Activity {
                 .withGravity(Gravity.BOTTOM | Gravity.RIGHT)
                 .withMargins(0, 0, 16, 16)
                 .create();
-
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -55,10 +69,48 @@ public class MainActivity extends Activity {
             }
         });
 
+        connectButton = new FloatingActionButton.Builder(this)
+                .withDrawable(getResources().getDrawable(R.drawable.ic_play))
+                .withButtonColor(getResources().getColor(R.color.Orange))
+                .withGravity(Gravity.BOTTOM | Gravity.LEFT)
+                .withMargins(16, 0, 0, 16)
+                .create();
+        connectButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                connectButtonClicked(v);
+            }
+        });
+
         populateDeviceList(); //ArrayList fill up
         populateListViewDevice(); //Fill up ListView with the ArrayList
         deviceListClick(); // onclick Listener für die ListView
 
+        //ToDo  nur zum testen muss durch einen eigenen Service ausgetauscht werden
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+    }
+
+    private void readStream(InputStream in) {
+        BufferedReader reader = null;
+        try {
+            reader = new BufferedReader(new InputStreamReader(in));
+            String line = "";
+            while ((line = reader.readLine()) != null) {
+                System.out.println(line);
+                Log.e("READ Stream",line);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
     @Override
@@ -83,6 +135,31 @@ public class MainActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
     //END of Standard Methods ----------------------------------------------------------------------
+
+    //Test -----------------------------------------------------------------------------------------
+    public boolean isNetworkAvailable() {
+        ConnectivityManager cm = (ConnectivityManager)
+                getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = cm.getActiveNetworkInfo();
+        // if no network is available networkInfo will be null
+        // otherwise check if we are connected
+        if (networkInfo != null && networkInfo.isConnected()) {
+            return true;
+        }
+        return false;
+    }
+    private void connectButtonClicked(View v) {
+        if (isNetworkAvailable()) Log.e("Network", "ok");
+
+        try {
+            URL url = new URL("http://www.vogella.com");
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            readStream(con.getInputStream());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    //END Test -------------------------------------------------------------------------------------
 
     private void populateListViewDevice() {
         ArrayAdapter<Device> adapter = new DevicesListAdapter();
