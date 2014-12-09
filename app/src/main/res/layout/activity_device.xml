@@ -7,19 +7,64 @@
     tools:context="at.app.dalight.dalight.DeviceActivit"
     android:background="@color/Black">
 
-    <TextView android:text="@string/EditDevice" android:layout_width="fill_parent"
+    <TextView android:text="@string/ShowDevice" android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
         android:id="@+id/MainText"
         android:textSize="32sp"
-        android:textColor="@color/White" />
+        android:textColor="@color/White"
+        android:textStyle="bold" />
+    <!-- Seperation Line between TextView and ListView  -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.2dp"
+        android:layout_below="@+id/MainText"
+        android:background="@drawable/gradient"
+        android:layout_alignParentStart="true" />
 
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="jump back!"
         android:id="@+id/btnback"
-        android:layout_below="@+id/MainText"
-        android:layout_marginTop="119dp"/>
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:longClickable="false" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/TextDeviceName"
+        android:textSize="32sp"
+        android:textColor="@color/White"
+        android:hint="@string/NewDeviceName"
+        android:phoneNumber="false"
+        android:layout_above="@+id/textType"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="48dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/textType"
+        android:textSize="32sp"
+        android:textColor="@color/White"
+        android:hint="@string/newType"
+        android:gravity="left"
+        android:layout_marginBottom="46dp"
+        android:layout_above="@+id/textAdress"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="left"
+        android:id="@+id/textAdress"
+        android:textSize="32sp"
+        android:textColor="@color/White"
+        android:hint="@string/newAdress"
+        android:layout_above="@+id/btnback"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="133dp" />
 
 </RelativeLayout>

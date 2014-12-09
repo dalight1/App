@@ -7,5 +7,12 @@
     <string name="welcome_text">Welcome</string>
     <string name="title_activity_edit_dalight">Device</string>
     <string name="EditDevice">Edit your Device!</string>
+    <string name="TxtHintforDevice">hier kommt der DeviceName</string>
+    <string name="DeviceName">Device:</string>
+    <string name="NewDeviceName">NewDeviceName</string>
+    <string name="newType">newType</string>
+    <string name="newAdress">newAdress</string>
+    <string name="AdressValue">Adress</string>
+    <string name="ShowDevice">Show your Device</string>
 
 </resources>

@@ -15,6 +15,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -88,15 +89,18 @@ public class MainActivity extends Activity {
         deviceListView.setAdapter(adapter);
     }
     private void populateDeviceList() {
-        myDevices.add(new Device("Name1", R.drawable.ic_launcher,15,"Typ1"));
-        myDevices.add(new Device("Name2", R.drawable.ic_launcher,16));
-        myDevices.add(new Device("Name3", R.drawable.ic_launcher,1,"Typ1"));
-        myDevices.add(new Device("Name4", R.drawable.ic_launcher,10,"Typ1"));
-        myDevices.add(new Device("Name5", R.drawable.ic_launcher,2));
-        myDevices.add(new Device("Name6", R.drawable.ic_launcher,4));
-        myDevices.add(new Device("Name7", R.drawable.ic_launcher,11));
-        myDevices.add(new Device("Name8", R.drawable.ic_launcher,0));
+        myDevices.add(new Device("DALI 1", R.drawable.ic_launcher,15,"LED"));
+        myDevices.add(new Device("DALI 2", R.drawable.ic_launcher,16));
+        myDevices.add(new Device("DALI 3", R.drawable.ic_launcher,1,"Typ1"));
+        myDevices.add(new Device("DALI 4", R.drawable.ic_launcher,10,"Typ1"));
+        myDevices.add(new Device("DALI 5", R.drawable.ic_launcher,2));
+        myDevices.add(new Device("DALI 6", R.drawable.ic_launcher,4));
+        myDevices.add(new Device("DALI 7", R.drawable.ic_launcher,11));
+        myDevices.add(new Device("DALI 8", R.drawable.ic_launcher,0));
+
     }
+
+    //Floating Button ********************************************
     private void addButtonClicked(View v){
 
         myDevices.add(new Device("Check this out", R.drawable.ic_launcher,15,"Hero!"));
@@ -113,6 +117,7 @@ public class MainActivity extends Activity {
             mode = false;
         }*/
     }
+    //Click on Device *************************************************
     private void deviceListClick() {
         deviceListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
@@ -125,13 +130,20 @@ public class MainActivity extends Activity {
         deviceListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                /*
-                Device clickedDevive = myDevices.get(position);
-                String message = "You Clicked " + position + " which ist string " + clickedDevive.getName();
-                Toast.makeText(MainActivity.this, message,Toast.LENGTH_SHORT).show();*/
 
-                //Wechsel in die Edit Activity
+                Device clickedDevive = myDevices.get(position);
+                //String message = "You Clicked " + position + " which ist string " + clickedDevive.getName();
+                //Toast.makeText(MainActivity.this, message, Toast.LENGTH_SHORT).show();
+
+
+                //Wechsel in die Device Activity
                 Intent intent = new Intent(MainActivity.this, DeviceActivit.class);
+
+                //Daten anhängen
+                intent.putExtra("ClickedDevice", clickedDevive.getName());
+                intent.putExtra("Type", clickedDevive.getType());
+                intent.putExtra("Adress", clickedDevive.getAdress());
+                intent.putExtra("extra", clickedDevive.getIconId());
                 startActivity(intent);
             }
         });
