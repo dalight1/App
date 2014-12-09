@@ -154,9 +154,18 @@ public class MainActivity extends Activity {
         if (isNetworkAvailable()) Log.e("Network", "ok");
 
         try {
-            URL url = new URL("http://www.vogella.com");
+            URL url = new URL("http://192.168.0.200/Heureka!!!!");
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
-            readStream(con.getInputStream());
+            //readStream(con.getInputStream());
+            BufferedReader r = new BufferedReader(new InputStreamReader(con.getInputStream()));
+            StringBuilder answere = new StringBuilder();
+            String line;
+            while ((line = r.readLine()) != null) {
+                answere.append(line);
+            }
+
+            Log.e("Network", line);
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -168,21 +177,21 @@ public class MainActivity extends Activity {
         deviceListView.setAdapter(adapter);
     }
     private void populateDeviceList() {
-        myDevices.add(new Device("DALI 1", R.drawable.ic_launcher,15,"LED"));
-        myDevices.add(new Device("DALI 2", R.drawable.ic_launcher,16));
-        myDevices.add(new Device("DALI 3", R.drawable.ic_launcher,1,"Typ1"));
-        myDevices.add(new Device("DALI 4", R.drawable.ic_launcher,10,"Typ1"));
-        myDevices.add(new Device("DALI 5", R.drawable.ic_launcher,2));
-        myDevices.add(new Device("DALI 6", R.drawable.ic_launcher,4));
-        myDevices.add(new Device("DALI 7", R.drawable.ic_launcher,11));
-        myDevices.add(new Device("DALI 8", R.drawable.ic_launcher,0));
+        myDevices.add(new Device("DALI 1", R.drawable.ic_lamp_2,15,"LED"));
+        myDevices.add(new Device("DALI 2", R.drawable.ic_lamp_2,16));
+        myDevices.add(new Device("DALI 3", R.drawable.ic_lamp_2,1,"Typ1"));
+        myDevices.add(new Device("DALI 4", R.drawable.ic_lamp_2,10,"Typ1"));
+        myDevices.add(new Device("DALI 5", R.drawable.ic_lamp_2,2));
+        myDevices.add(new Device("DALI 6", R.drawable.ic_lamp_2,4));
+        myDevices.add(new Device("DALI 7", R.drawable.ic_lamp_2,11));
+        myDevices.add(new Device("DALI 8", R.drawable.ic_lamp_2,0));
 
     }
 
     //Floating Button ********************************************
     private void addButtonClicked(View v){
 
-        myDevices.add(new Device("Check this out", R.drawable.ic_launcher,15,"Hero!"));
+        myDevices.add(new Device("Check this out", R.drawable.ic_lamp_2,15,"Hero!"));
         populateListViewDevice();
         /*
         if (!mode){
