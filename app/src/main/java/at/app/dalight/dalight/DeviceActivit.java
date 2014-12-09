@@ -6,17 +6,28 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class DeviceActivit extends Activity implements View.OnClickListener{
 
+    // Definitions
     public Button btnback1;
-    public TextView TextDeviceName;
     public TextView TextTypeName;
     public TextView TextAdressName;
+    public TextView MainText;
+
+    //ListView
+    private ListView deviceListView_Actions;
+    //Extended ListView
+    public List<Device> myDevices = new ArrayList<Device>();
 
 
 
@@ -25,9 +36,11 @@ public class DeviceActivit extends Activity implements View.OnClickListener{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_device);
 
-        TextDeviceName = (TextView) findViewById(R.id.TextDeviceName);
+        //Create
         TextTypeName = (TextView) findViewById(R.id.textType);
         TextAdressName = (TextView) findViewById(R.id.textAdress);
+        MainText = (TextView) findViewById(R.id.MainText);
+        deviceListView_Actions = (ListView) findViewById(R.id.listView_DeviceActions);
 
 
         btnback1 = (Button) findViewById(R.id.btnback);
@@ -45,7 +58,7 @@ public class DeviceActivit extends Activity implements View.OnClickListener{
         final Bundle extras = getIntent().getExtras();
 
         if (extras != null) {
-            TextDeviceName.setText("Device name: " + extras.getString("ClickedDevice"));
+            MainText.setText(extras.getString("ClickedDevice"));
             TextTypeName.setText("Device type: " + extras.getString("Type"));
             TextAdressName.setText("Device adress: " + extras.getInt("Adress"));
         }
@@ -92,6 +105,16 @@ public class DeviceActivit extends Activity implements View.OnClickListener{
             }
 
         }
+
+    }
+
+
+    //ListView Class---------------------------------------------------------------------------------
+    private class DevicesListAdapter extends ArrayAdapter<Device> {
+        public DevicesListAdapter() {
+            super(DeviceActivit.this, R.layout.item_device, myDevices);
+        }
+
 
     }
 }

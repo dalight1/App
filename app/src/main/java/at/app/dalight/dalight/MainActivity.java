@@ -252,7 +252,7 @@ public class MainActivity extends Activity {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            //Make shure we have a view to work with
+            //Make sure we have a view to work with
             View itemView = convertView;
             if (itemView == null){
                 itemView = getLayoutInflater().inflate(R.layout.item_device, parent,false);

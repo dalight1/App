@@ -20,7 +20,8 @@
         android:layout_height="0.2dp"
         android:layout_below="@+id/MainText"
         android:background="@drawable/gradient"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:id="@+id/textView2" />
 
     <Button
         android:layout_width="match_parent"
@@ -34,37 +35,34 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/TextDeviceName"
-        android:textSize="32sp"
-        android:textColor="@color/White"
-        android:hint="@string/NewDeviceName"
-        android:phoneNumber="false"
-        android:layout_above="@+id/textType"
-        android:layout_alignParentStart="true"
-        android:layout_marginBottom="48dp" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:id="@+id/textType"
-        android:textSize="32sp"
+        android:textSize="20sp"
         android:textColor="@color/White"
         android:hint="@string/newType"
         android:gravity="left"
-        android:layout_marginBottom="46dp"
-        android:layout_above="@+id/textAdress"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/textView2"
+        android:textStyle="italic" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="left"
         android:id="@+id/textAdress"
-        android:textSize="32sp"
+        android:textSize="20sp"
         android:textColor="@color/White"
         android:hint="@string/newAdress"
-        android:layout_above="@+id/btnback"
+        android:layout_below="@+id/textType"
         android:layout_alignParentStart="true"
-        android:layout_marginBottom="133dp" />
+        android:textStyle="italic" />
+
+    <ListView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/listView_DeviceActions"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/textAdress"
+        android:layout_above="@+id/btnback"
+        android:choiceMode="singleChoice" />
 
 </RelativeLayout>
