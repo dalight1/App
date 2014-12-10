@@ -48,12 +48,18 @@ public class MainActivity extends Activity {
     //Extended ListView
     private List<Device> myDevices = new ArrayList<Device>();
 
+    //Connection
+    private BridgeConnection test;
+
+    Context context;
+
     //Standard Methods -----------------------------------------------------------------------------
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        context = this;
         deviceListView = (ListView) findViewById(R.id.listViewMain);
 
         addButton = new FloatingActionButton.Builder(this)
@@ -82,13 +88,15 @@ public class MainActivity extends Activity {
             }
         });
 
+
+
         populateDeviceList(); //ArrayList fill up
         populateListViewDevice(); //Fill up ListView with the ArrayList
         deviceListClick(); // onclick Listener für die ListView
 
         //ToDo  nur zum testen muss durch einen eigenen Service ausgetauscht werden
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
+        //StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        //StrictMode.setThreadPolicy(policy);
     }
 
     @Override
@@ -150,25 +158,10 @@ public class MainActivity extends Activity {
         }
         return false;
     }
+
     private void connectButtonClicked(View v) {
-        if (isNetworkAvailable()) Log.e("Network", "ok");
-
-        try {
-            URL url = new URL("http://192.168.0.200/Heureka!!!!");
-            HttpURLConnection con = (HttpURLConnection) url.openConnection();
-            //readStream(con.getInputStream());
-            BufferedReader r = new BufferedReader(new InputStreamReader(con.getInputStream()));
-            StringBuilder answere = new StringBuilder();
-            String line;
-            while ((line = r.readLine()) != null) {
-                answere.append(line);
-            }
-
-            Log.e("Network", line);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        test = new BridgeConnection();
+        test.execute("http://192.168.0.200/hallihallo");
     }
     //END Test -------------------------------------------------------------------------------------
 
