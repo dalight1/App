@@ -161,7 +161,7 @@ public class MainActivity extends Activity {
 
     private void connectButtonClicked(View v) {
         test = new BridgeConnection();
-        test.execute("http://192.168.0.200/hallihallo");
+        test.execute("http://192.168.0.200/hallihallo" + getResources());
     }
     //END Test -------------------------------------------------------------------------------------
 
