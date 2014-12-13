@@ -14,5 +14,6 @@
     <string name="newAdress">newAdress</string>
     <string name="AdressValue">Adress</string>
     <string name="ShowDevice">Show your Device</string>
+    <string name="title_activity_activity_controll">activity_controll</string>
 
 </resources>
