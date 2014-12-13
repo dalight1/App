@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="selection_group">
+        <item>Group_00</item>
+        <item>Group_01</item>
+        <item>Group_02</item>
+        <item>Group_03</item>
+        <item>Group_04</item>
+        <item>Group_05</item>
+        <item>Group_06</item>
+        <item>Group_07</item>
+        <item>Group_08</item>
+        <item>Group_09</item>
+        <item>Group_10</item>
+        <item>Group_11</item>
+        <item>Group_12</item>
+        <item>Group_13</item>
+        <item>Group_14</item>
+        <item>Group_15</item>
+    </string-array>
+
+</resources>
