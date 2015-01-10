@@ -41,11 +41,6 @@ public class DeviceActivity extends Activity implements View.OnClickListener{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_device);
 
-        //Create
-        TextTypeName = (TextView) findViewById(R.id.textType);
-        TextAdressName = (TextView) findViewById(R.id.textAdress);
-        MainText = (TextView) findViewById(R.id.MainText);
-
         //Tab Host Create **************************************************
         TabHost tabHost = (TabHost) findViewById(R.id.tabHost_Device);
 
@@ -65,8 +60,16 @@ public class DeviceActivity extends Activity implements View.OnClickListener{
         tabSpec.setIndicator("scene");
         tabHost.addTab(tabSpec);
 
+        //Create
+        TextTypeName = (TextView) findViewById(R.id.textType);
+        TextAdressName = (TextView) findViewById(R.id.textAdress);
+        MainText = (TextView) findViewById(R.id.MainText);
+
 
         deviceListView_Actions = (ListView) findViewById(R.id.listView_DeviceActions);
+        //Setzen der Daten und Aufrufen der Listwiew
+        populateDeviceList();
+        populateListViewDevice();
 
 
         btnback1 = (Button) findViewById(R.id.btnback);
@@ -76,9 +79,7 @@ public class DeviceActivity extends Activity implements View.OnClickListener{
         //setzen der Texte, die mitübergeben wurden
         settheText();
 
-        //Setzen der Daten und Aufrufen der Listwiew
-        populateDeviceList();
-        populateListViewDevice();
+
 
 
     }
