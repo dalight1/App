@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.os.StrictMode;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
@@ -19,18 +18,13 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,16 +34,18 @@ public class MainActivity extends Activity {
     //Layout Elements
     private FloatingActionButton addButton;
     private FloatingActionButton connectButton;
-    private Boolean mode;
 
     //List view: {views: items.xml}
     private ListView deviceListView;
+
+    //Spinner für die Auswahl der Selection
+    private Spinner filter_devices;
 
     //Extended ListView
     private List<Device> myDevices = new ArrayList<Device>();
 
     //Connection
-    private BridgeConnection test;
+    //private BridgeConnection test;
 
     Context context;
 
@@ -58,9 +54,50 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         context = this;
+
+        initializeLayoutElements();
+
+        populateDeviceList(); //ArrayList fill up
+        populateListViewDevice(); //Fill up ListView with the ArrayList
+        deviceListClick(); // onclick Listener für die ListView
+        addItemToFilterSpinner();
+
+        //ToDo  nur zum testen muss durch einen eigenen Service ausgetauscht werden
+        //StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        //StrictMode.setThreadPolicy(policy);
+    }
+
+    private void addItemToFilterSpinner() {
+        ArrayAdapter<CharSequence> filterSpinnerAdapter = ArrayAdapter.createFromResource(
+                this,
+                R.array.selection_group,
+                android.R.layout.simple_spinner_dropdown_item);
+        filterSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        filter_devices.setAdapter(filterSpinnerAdapter);
+        addListenerToFilterSpinner();
+    }
+
+    public void addListenerToFilterSpinner(){
+        filter_devices.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String itemSelectedInSpinner = parent.getItemAtPosition(position).toString();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+    }
+
+    private void initializeLayoutElements() {
+        // in dieser Funktion werden alle Elemente der GUI initialisiert und referenziert
+
         deviceListView = (ListView) findViewById(R.id.listViewMain);
+        filter_devices = (Spinner) findViewById(R.id.sp_filter_devices);
 
         addButton = new FloatingActionButton.Builder(this)
                 .withDrawable(getResources().getDrawable(R.drawable.ic_add))
@@ -87,16 +124,6 @@ public class MainActivity extends Activity {
                 connectButtonClicked(v);
             }
         });
-
-
-
-        populateDeviceList(); //ArrayList fill up
-        populateListViewDevice(); //Fill up ListView with the ArrayList
-        deviceListClick(); // onclick Listener für die ListView
-
-        //ToDo  nur zum testen muss durch einen eigenen Service ausgetauscht werden
-        //StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        //StrictMode.setThreadPolicy(policy);
     }
 
     @Override
@@ -160,8 +187,8 @@ public class MainActivity extends Activity {
     }
 
     private void connectButtonClicked(View v) {
-        test = new BridgeConnection();
-        test.execute("http://192.168.0.200/hallihallo" + getResources());
+        BridgeConnectionTCP test = new BridgeConnectionTCP();
+        test.execute("");
     }
     //END Test -------------------------------------------------------------------------------------
 
