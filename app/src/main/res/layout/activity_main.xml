@@ -15,7 +15,8 @@
         android:textSize="12sp"
         android:id="@+id/listHeader"
         android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:singleLine="false" />
 
     <!-- Seperation Line between TextView and ListView  -->
     <View
