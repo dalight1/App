@@ -16,19 +16,10 @@
 
 package at.app.dalight.dalight;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-
-
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
-import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -37,8 +28,6 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.IBinder;
-import android.os.Message;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -54,8 +43,17 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
 public class DeviceListActivityBLE extends Activity {
     private BluetoothAdapter mBluetoothAdapter;
+
+    // Full Bluetooth UUID that defines the UART Service
+    private static final UUID THERM_SERVICE = UUID.fromString("6E400001-B5A3-F393-E0A9-E50E24DCCA9E");
 
    // private BluetoothAdapter mBtAdapter;
     private TextView mEmptyList;
@@ -79,7 +77,7 @@ public class DeviceListActivityBLE extends Activity {
         getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.title_bar);
         setContentView(R.layout.device_list);
         android.view.WindowManager.LayoutParams layoutParams = this.getWindow().getAttributes();
-        layoutParams.gravity=Gravity.TOP;
+        layoutParams.gravity= Gravity.TOP;
         layoutParams.y = 200;
         mHandler = new Handler();
         // Use this check to determine whether BLE is supported on the device.  Then you can
@@ -146,6 +144,7 @@ public class DeviceListActivityBLE extends Activity {
             }, SCAN_PERIOD);
 
             mScanning = true;
+            //mBluetoothAdapter.startDiscovery();
             mBluetoothAdapter.startLeScan(mLeScanCallback);
             cancelButton.setText(R.string.cancel);
         } else {
@@ -156,27 +155,30 @@ public class DeviceListActivityBLE extends Activity {
 
     }
 
-    private BluetoothAdapter.LeScanCallback mLeScanCallback =
-            new BluetoothAdapter.LeScanCallback() {
+    private BluetoothAdapter.LeScanCallback mLeScanCallback;
 
-        @Override
-        public void onLeScan(final BluetoothDevice device, final int rssi, byte[] scanRecord) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                	
-                	  runOnUiThread(new Runnable() {
-                          @Override
-                          public void run() {
-                              addDevice(device,rssi);
-                          }
-                      });
-                   
-                }
-            });
-        }
-    };
-    
+    {
+        mLeScanCallback = new BluetoothAdapter.LeScanCallback() {
+
+            @Override
+            public void onLeScan(final BluetoothDevice device, final int rssi, byte[] scanRecord) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                addDevice(device, rssi);
+                            }
+                        });
+
+                    }
+                });
+            }
+        };
+    }
+
     private void addDevice(BluetoothDevice device, int rssi) {
         boolean deviceFound = false;
 
@@ -299,7 +301,7 @@ public class DeviceListActivityBLE extends Activity {
             tvname.setText(device.getName());
             tvadd.setText(device.getAddress());
             if (device.getBondState() == BluetoothDevice.BOND_BONDED) {
-                Log.i(TAG, "device::"+device.getName());
+                Log.i(TAG, "device::" + device.getName());
                 tvname.setTextColor(Color.WHITE);
                 tvadd.setTextColor(Color.WHITE);
                 tvpaired.setTextColor(Color.GRAY);

@@ -1,15 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="at.app.dalight.dalight" >
+
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+
+    <!-- android:label="DALIght" -->
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_logo"
-        android:theme="@style/AppTheme"
-        android:label="DALIght">
+        android:label="DALIght"
+        android:theme="@style/AppTheme" >
         <activity
             android:name="at.app.dalight.dalight.MainActivity"
             android:label="@string/app_name" >
@@ -20,9 +24,20 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".DeviceActivit"
+            android:name="at.app.dalight.dalight.DeviceActivity"
             android:label="@string/title_activity_edit_dalight" >
         </activity>
+        <activity
+            android:name="at.app.dalight.dalight.activity_controll"
+            android:label="@string/title_activity_activity_controll" >
+        </activity>
+        <activity
+            android:name=".DeviceListActivityBLE"
+            android:label="@string/app_name"
+            android:theme="@android:style/Theme.Dialog">
+             </activity>
+
+        <service android:enabled="true" android:name=".UartService" />
     </application>
-    <!-- android:label="DALIght"   -->
+
 </manifest>

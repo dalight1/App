@@ -2,12 +2,18 @@ package at.app.dalight.dalight;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
+import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
@@ -16,24 +22,25 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 
 public class MainActivity extends Activity {
 
     //Layout Elements
-    private FloatingActionButton addButton;
     private FloatingActionButton connectButton;
+    private FloatingActionButton TESTsendButton;
 
     //List view: {views: items.xml}
     private ListView deviceListView;
@@ -46,6 +53,19 @@ public class MainActivity extends Activity {
 
     //Connection
     //private BridgeConnection test;
+    //BLE Components
+    private static final int REQUEST_SELECT_DEVICE = 1;
+    private static final int REQUEST_ENABLE_BT = 2;
+    public static final String TAG = "DALight-App";
+    private static final int UART_PROFILE_CONNECTED = 20;
+    private static final int UART_PROFILE_DISCONNECTED = 21;
+
+    private int mState = UART_PROFILE_DISCONNECTED;
+    private UartService mService = null;
+    private BluetoothDevice mDevice = null;
+    private BluetoothAdapter mBtAdapter = null;
+    private boolean connected = false;
+
 
     Context context;
 
@@ -58,16 +78,148 @@ public class MainActivity extends Activity {
 
         initializeLayoutElements();
 
+        //check if Bluetooth is available
+        mBtAdapter = BluetoothAdapter.getDefaultAdapter();
+        if (mBtAdapter == null) {
+            Toast.makeText(this, "Bluetooth is not available", Toast.LENGTH_LONG).show();
+            finish();
+            return;
+        }
+
         populateDeviceList(); //ArrayList fill up
         populateListViewDevice(); //Fill up ListView with the ArrayList
         deviceListClick(); // onclick Listener für die ListView
-        addItemToFilterSpinner();
+        //addItemToFilterSpinner();
+        service_init();
 
-        //ToDo  nur zum testen muss durch einen eigenen Service ausgetauscht werden
-        //StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        //StrictMode.setThreadPolicy(policy);
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    //UART service connected/disconnected
+    private ServiceConnection mServiceConnection = new ServiceConnection() {
+        public void onServiceConnected(ComponentName className, IBinder rawBinder) {
+            mService = ((UartService.LocalBinder) rawBinder).getService();
+            Log.d(TAG, "onServiceConnected mService= " + mService);
+            if (!mService.initialize()) {
+                Log.e(TAG, "Unable to initialize Bluetooth");
+                finish();
+            }
+
+        }
+
+        public void onServiceDisconnected(ComponentName classname) {
+            ////     mService.disconnect(mDevice);
+            mService = null;
+        }
+    };
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+
+            case REQUEST_SELECT_DEVICE:
+                //When the DeviceListActivity return, with the selected device address
+                if (resultCode == Activity.RESULT_OK && data != null) {
+                    String deviceAddress = data.getStringExtra(BluetoothDevice.EXTRA_DEVICE);
+                    mDevice = BluetoothAdapter.getDefaultAdapter().getRemoteDevice(deviceAddress);
+
+                    Log.d(TAG, "... onActivityResultdevice.address==" + mDevice + "mserviceValue" + mService);
+                    ((TextView) findViewById(R.id.listHeader)).setText(mDevice.getName()+ " - connecting");
+                    mService.connect(deviceAddress);
+                }
+                break;
+            case REQUEST_ENABLE_BT:
+                // When the request to enable Bluetooth returns
+                if (resultCode == Activity.RESULT_OK) {
+                    Toast.makeText(this, "Bluetooth has turned on ", Toast.LENGTH_SHORT).show();
+
+                } else {
+                    // User did not enable Bluetooth or an error occurred
+                    Log.d(TAG, "BT not enabled");
+                    Toast.makeText(this, "Problem in BT Turning ON ", Toast.LENGTH_SHORT).show();
+                    finish();
+                }
+                break;
+            default:
+                Log.e(TAG, "wrong request code");
+                break;
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.d(TAG, "onResume");
+        if (!mBtAdapter.isEnabled()) {
+            Log.i(TAG, "onResume - BT not enabled yet");
+            Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
+        }
+
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG, "onDestroy()");
+
+        try {
+            LocalBroadcastManager.getInstance(this).unregisterReceiver(UARTStatusChangeReceiver);
+        } catch (Exception ignore) {
+            Log.e(TAG, ignore.toString());
+        }
+        unbindService(mServiceConnection);
+        mService.stopSelf();
+        mService= null;
+
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (mState == UART_PROFILE_CONNECTED) {
+            Intent startMain = new Intent(Intent.ACTION_MAIN);
+            startMain.addCategory(Intent.CATEGORY_HOME);
+            startMain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(startMain);
+        }
+        else {
+            new AlertDialog.Builder(this)
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .setTitle(R.string.popup_title)
+                    .setMessage(R.string.popup_message)
+                    .setPositiveButton(R.string.popup_yes, new DialogInterface.OnClickListener()
+                    {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            finish();
+                        }
+                    })
+                    .setNegativeButton(R.string.popup_no, null)
+                    .show();
+        }
+    }
+
+    //Init Methods -----------------------------------------------------------------------------
     private void addItemToFilterSpinner() {
         ArrayAdapter<CharSequence> filterSpinnerAdapter = ArrayAdapter.createFromResource(
                 this,
@@ -99,24 +251,11 @@ public class MainActivity extends Activity {
         deviceListView = (ListView) findViewById(R.id.listViewMain);
         filter_devices = (Spinner) findViewById(R.id.sp_filter_devices);
 
-        addButton = new FloatingActionButton.Builder(this)
-                .withDrawable(getResources().getDrawable(R.drawable.ic_add))
+        connectButton = new FloatingActionButton.Builder(this)
+                .withDrawable(getResources().getDrawable(R.drawable.ic_ble))
                 .withButtonColor(getResources().getColor(R.color.Orange))
                 .withGravity(Gravity.BOTTOM | Gravity.RIGHT)
                 .withMargins(0, 0, 16, 16)
-                .create();
-        addButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                addButtonClicked(v);
-            }
-        });
-
-        connectButton = new FloatingActionButton.Builder(this)
-                .withDrawable(getResources().getDrawable(R.drawable.ic_play))
-                .withButtonColor(getResources().getColor(R.color.Orange))
-                .withGravity(Gravity.BOTTOM | Gravity.LEFT)
-                .withMargins(16, 0, 0, 16)
                 .create();
         connectButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -124,72 +263,34 @@ public class MainActivity extends Activity {
                 connectButtonClicked(v);
             }
         });
+
+        initTESTsendButton();
+        TESTsendButton.setVisibility(View.INVISIBLE);
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
+    private void initTESTsendButton(){
+        TESTsendButton = new FloatingActionButton.Builder(this)
+                .withDrawable(getResources().getDrawable(R.drawable.ic_play))
+                .withButtonColor(getResources().getColor(R.color.Orange))
+                .withGravity(Gravity.BOTTOM | Gravity.LEFT)
+                .withMargins(0, 0, 16, 16)
+                .create();
+        TESTsendButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendButtonClicked(v);
+            }
+        });
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+    private void service_init() {
+        Intent bindIntent = new Intent(this, UartService.class);
+        bindService(bindIntent, mServiceConnection, Context.BIND_AUTO_CREATE);
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
+        LocalBroadcastManager.getInstance(this).registerReceiver(UARTStatusChangeReceiver, makeGattUpdateIntentFilter());
     }
     //END of Standard Methods ----------------------------------------------------------------------
 
-    //Test -----------------------------------------------------------------------------------------
-    private void readStream(InputStream in) {
-        BufferedReader reader = null;
-        try {
-            reader = new BufferedReader(new InputStreamReader(in));
-            String line = "";
-            while ((line = reader.readLine()) != null) {
-                //wird nur als Log Eintrag ausgegeben
-
-                //System.out.println(line);
-                Log.e("READ Stream",line);
-                //Todo muss als String zurückgegeben werden und weiterverarbeitet
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            if (reader != null) {
-                try {
-                    reader.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
-    public boolean isNetworkAvailable() {
-        ConnectivityManager cm = (ConnectivityManager)
-                getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = cm.getActiveNetworkInfo();
-        // if no network is available networkInfo will be null
-        // otherwise check if we are connected
-        if (networkInfo != null && networkInfo.isConnected()) {
-            return true;
-        }
-        return false;
-    }
-
-    private void connectButtonClicked(View v) {
-        BridgeConnectionTCP test = new BridgeConnectionTCP();
-        test.execute("");
-    }
     //END Test -------------------------------------------------------------------------------------
 
     private void populateListViewDevice() {
@@ -209,22 +310,55 @@ public class MainActivity extends Activity {
     }
 
     //Floating Button ********************************************
-    private void addButtonClicked(View v){
-
-        myDevices.add(new Device("Check this out", R.drawable.ic_lamp_2,15,"Hero!"));
-        populateListViewDevice();
-        /*
-        if (!mode){
-            addButton.setFloatingActionButtonDrawable(getResources().getDrawable(R.drawable.ic_play));
-            Toast.makeText(getApplicationContext(),"Der Play Modus ist aktiv!", Toast.LENGTH_SHORT).show();
-            mode = true;
+    private void connectButtonClicked(View v){
+        if (!mBtAdapter.isEnabled()) {
+            Log.i(TAG, "onClick - BT not enabled yet");
+            Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
         }
-        else{
-            addButton.setFloatingActionButtonDrawable(getResources().getDrawable(R.drawable.ic_add));
-            Toast.makeText(getApplicationContext(),"Der Add Modus ist aktiv!", Toast.LENGTH_SHORT).show();
-            mode = false;
-        }*/
+        else {
+            if (!connected){
+
+                //Connect button pressed, open DeviceListActivity class, with popup windows that scan for devices
+
+                Intent newIntent = new Intent(MainActivity.this, DeviceListActivityBLE.class);
+                startActivityForResult(newIntent, REQUEST_SELECT_DEVICE);
+                connectButton.setFloatingActionButtonDrawable(getResources().getDrawable(R.drawable.ic_ble_connected));
+            } else {
+                //Disconnect button pressed
+                if (mDevice!=null)
+                {
+                    mService.disconnect();
+                }
+            }
+        }
     }
+
+    private void sendButtonClicked(View v){
+        //EditText editText = (EditText) findViewById(R.id.sendText);
+        String message = "TestTestTestTestTestTest";//editText.getText().toString();
+        byte[] value;
+        try {
+            //send data to service
+            value = message.getBytes("UTF-8");
+            mService.writeRXCharacteristic(value);
+            //Update the log with time stamp
+            //String currentDateTimeString = DateFormat.getTimeInstance().format(new Date());
+            //"["+currentDateTimeString+"] TX: "+ message
+        } catch (UnsupportedEncodingException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+
+
+
+    }
+
+    private void setHeader(String newText){
+        ((TextView) findViewById(R.id.listHeader)).setText(newText);
+    }
+
     //Click on Device *************************************************
     private void deviceListClick() {
         deviceListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
@@ -245,9 +379,16 @@ public class MainActivity extends Activity {
 
 
                 //Wechsel in die Device Activity
-                Intent intent = new Intent(MainActivity.this, DeviceActivit.class);
+                Intent intent = new Intent(MainActivity.this, DeviceActivity.class);
+
+                //ArrayList<Device> liste = clickedDevive.writeToParcel();
 
                 //Daten anhängen
+
+                //intent.putParcelableArrayListExtra("Data",clickedDevive.getClass());
+
+
+
                 intent.putExtra("ClickedDevice", clickedDevive.getName());
                 intent.putExtra("Type", clickedDevive.getType());
                 intent.putExtra("Adress", clickedDevive.getAdress());
@@ -272,6 +413,87 @@ public class MainActivity extends Activity {
                 .setNegativeButton("No", null)//Do nothing on no
                 .show();
     }
+
+    private static IntentFilter makeGattUpdateIntentFilter() {
+        final IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(UartService.ACTION_GATT_CONNECTED);
+        intentFilter.addAction(UartService.ACTION_GATT_DISCONNECTED);
+        intentFilter.addAction(UartService.ACTION_GATT_SERVICES_DISCOVERED);
+        intentFilter.addAction(UartService.ACTION_DATA_AVAILABLE);
+        intentFilter.addAction(UartService.DEVICE_DOES_NOT_SUPPORT_UART);
+        return intentFilter;
+    }
+
+    private final BroadcastReceiver UARTStatusChangeReceiver = new BroadcastReceiver() {
+
+        public void onReceive(final Context context, Intent intent) {
+            String action = intent.getAction();
+
+            final Intent mIntent = intent;
+            //*********************//
+            if (action.equals(UartService.ACTION_GATT_CONNECTED)) {
+                runOnUiThread(new Runnable() {
+                    public void run() {
+                        String currentDateTimeString = DateFormat.getTimeInstance().format(new Date());
+                        Log.d(TAG, "UART_CONNECT_MSG");
+                        connectButton.setFloatingActionButtonDrawable(getResources().getDrawable(R.drawable.ic_ble_connected));
+                        connected = true;
+                        TESTsendButton.setVisibility(View.VISIBLE);
+                        setHeader("Connected to " + mDevice.getName());
+                        mState = UART_PROFILE_CONNECTED;
+                    }
+                });
+            }
+
+            //*********************//
+            if (action.equals(UartService.ACTION_GATT_DISCONNECTED)) {
+                runOnUiThread(new Runnable() {
+                    public void run() {
+                        String currentDateTimeString = DateFormat.getTimeInstance().format(new Date());
+                        Log.d(TAG, "UART_DISCONNECT_MSG");
+                        connectButton.setFloatingActionButtonDrawable(getResources().getDrawable(R.drawable.ic_ble));
+                        TESTsendButton.setVisibility(View.INVISIBLE);
+                        connected = false;
+                        setHeader("Not Connected");
+                        Toast.makeText(context,"Disconnected: "+ mDevice.getName(), Toast.LENGTH_LONG).show();
+                        mState = UART_PROFILE_DISCONNECTED;
+                        mService.close();
+                    }
+                });
+            }
+
+
+            //*********************//
+            if (action.equals(UartService.ACTION_GATT_SERVICES_DISCOVERED)) {
+                mService.enableTXNotification();
+            }
+            //*********************//
+            if (action.equals(UartService.ACTION_DATA_AVAILABLE)) {
+
+                final byte[] txValue = intent.getByteArrayExtra(UartService.EXTRA_DATA);
+                runOnUiThread(new Runnable() {
+                    public void run() {
+                        try {
+                            String text = new String(txValue, "UTF-8");
+                            String currentDateTimeString = DateFormat.getTimeInstance().format(new Date());
+                            Toast.makeText(context,"["+currentDateTimeString+"] RX: "+text, Toast.LENGTH_LONG).show();
+
+                        } catch (Exception e) {
+                            Log.e(TAG, e.toString());
+                        }
+                    }
+                });
+            }
+            //*********************//
+            if (action.equals(UartService.DEVICE_DOES_NOT_SUPPORT_UART)){
+                Toast.makeText(context,"Device doesn't support UART. Disconnecting", Toast.LENGTH_LONG).show();
+                mService.disconnect();
+            }
+
+
+        }
+    };
+
 
     //Helper Class----------------------------------------------------------------------------------
     private class DevicesListAdapter extends ArrayAdapter<Device> {
