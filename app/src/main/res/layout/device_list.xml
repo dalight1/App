@@ -16,9 +16,10 @@
 -->
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:orientation="vertical" >
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@color/Black">
 
     <RelativeLayout
         android:layout_width="fill_parent"
@@ -49,8 +50,8 @@
         android:orientation="vertical" >
         <ListView
             android:id="@+id/new_devices"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_weight="2"
             android:stackFromBottom="true" />
 

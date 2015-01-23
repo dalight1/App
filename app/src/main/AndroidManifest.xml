@@ -13,7 +13,8 @@
         android:allowBackup="true"
         android:icon="@drawable/ic_logo"
         android:label="DALIght"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme"
+        android:name=".BridgeConnectionBLE">
         <activity
             android:name="at.app.dalight.dalight.MainActivity"
             android:label="@string/app_name" >
@@ -39,5 +40,6 @@
 
         <service android:enabled="true" android:name=".UartService" />
     </application>
+
 
 </manifest>

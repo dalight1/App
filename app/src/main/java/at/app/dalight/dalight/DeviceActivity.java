@@ -2,7 +2,7 @@ package at.app.dalight.dalight;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.provider.CalendarContract;
+import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,9 +12,9 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TabHost;
 import android.widget.TextView;
-import android.widget.Toast;
 
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,14 +33,15 @@ public class DeviceActivity extends Activity implements View.OnClickListener{
     //Extended ListView
     private ListView deviceListView_Controll;
     public List<Device> myDevices = new ArrayList<Device>();
+    private FloatingActionButton TESTsendButton;
 
-
+    private BridgeConnectionBLE bridgeConnection;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_device);
-
+        bridgeConnection = (BridgeConnectionBLE)getApplicationContext();
         //Tab Host Create **************************************************
         TabHost tabHost = (TabHost) findViewById(R.id.tabHost_Device);
 
@@ -77,15 +78,26 @@ public class DeviceActivity extends Activity implements View.OnClickListener{
 
 
         //setzen der Texte, die mitübergeben wurden
-        settheText();
+        setTexts();
 
+        TESTsendButton = new FloatingActionButton.Builder(this)
+                .withDrawable(getResources().getDrawable(R.drawable.ic_lamp_1))
+                .withButtonColor(getResources().getColor(R.color.White))
+                .withGravity(Gravity.TOP | Gravity.RIGHT)
+                .withMargins(0, 16, 16, 0)
+                .create();
 
-
-
+        TESTsendButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //EditText editText = (EditText) findViewById(R.id.sendText);
+                ((BridgeConnectionBLE) getApplicationContext()).sendCMD(DaliCommands.OFF,1);
+            }
+        });
     }
 
 
-    public void settheText()
+    public void setTexts()
     {
         //Übergebene Daten ausgeben *********************************
         final Bundle extras = getIntent().getExtras();
@@ -138,10 +150,11 @@ public class DeviceActivity extends Activity implements View.OnClickListener{
                 break;
             }
 
-
         }
 
     }
+
+
 
       //Wird nicht mehr benötigt, nur zum Nachschauen aktiv
     //ListView Class---------------------------------------------------------------------------------

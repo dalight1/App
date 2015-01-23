@@ -377,4 +377,12 @@ public class UartService extends Service {
 
         return mBluetoothGatt.getServices();
     }
+
+    public boolean isConnected() {
+        if (mConnectionState == STATE_CONNECTED) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }
