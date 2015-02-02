@@ -12,8 +12,7 @@
         android:layout_height="fill_parent"
         android:id="@+id/tabHost_Device"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/textView3"
-        android:layout_above="@+id/btnback">
+        android:layout_below="@+id/textView3">
 
         <RelativeLayout
             android:layout_width="fill_parent"
@@ -90,15 +89,6 @@
         android:background="@drawable/gradient"
         android:layout_alignParentStart="true"
         android:id="@+id/textView2" />
-
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="jump back!"
-        android:id="@+id/btnback"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true"
-        android:longClickable="false" />
 
     <TextView
         android:layout_width="wrap_content"

@@ -3,41 +3,38 @@ package at.app.dalight.dalight;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  * Created by Stephan on 09.11.2014.
  * This class represents one Device at the DALI Bus
  */
-public class Device implements Parcelable{
+public class Device implements Serializable //Added implements Serializable
+{
 
     private String name;
     private int iconId;
+
+
     private int adress;
     private boolean[] group;
     private Scene[] scene;
     private String type;
 
+    //TODO IllegalArgumentException bei den Settern
 
     public Device(String name, int iconId, int adress, String type) {
         this.name = name;
         this.iconId = iconId;
-        this.adress = adress;
+        this.setAdress(adress);
         this.type = type;
 
         group = new boolean[16];
         scene = new Scene[16];
     }
 
-    public Device(Parcel parcel) {
-        this.name = parcel.readString();
-        this.iconId = parcel.readInt();
-        this.adress = parcel.readInt();
-        this.type = parcel.readString();
-    }
-
-
-    public Device(String name, int iconId, int adress) {
+       public Device(String name, int iconId, int adress) {
         this.name = name;
         this.iconId = iconId;
         this.adress = adress;
@@ -81,32 +78,12 @@ public class Device implements Parcelable{
         return type;
     }
 
-
-    @Override
-    public int describeContents() {
-        return 0;
+    public void setAdress(int adress) {
+        if(adress <= 64)this.adress = adress;
+        else throw new IllegalArgumentException("Adress must be <= 64");
     }
 
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(name);
-        dest.writeInt(iconId);
-        dest.writeInt(adress);
-        dest.writeString(type);
-    }
 
-    public static final Creator<Device> CREATOR = new Creator<Device>() {
-        @Override
-        public Device createFromParcel(Parcel source) {
-            return new Device(source);
-        }
-
-        @Override
-        public Device[] newArray(int size) {
-            return new Device[size];
-
-        }
-    };
     public boolean[] getGroup() {
         return group;
     }

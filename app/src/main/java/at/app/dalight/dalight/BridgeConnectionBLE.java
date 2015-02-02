@@ -34,6 +34,8 @@ public class BridgeConnectionBLE  extends Application {
                 //Update the log with time stamp
                 String currentDateTimeString = DateFormat.getTimeInstance().format(new Date());
                 Log.d(TAG, "[" + currentDateTimeString + "] TX: " + text);
+                Log.d(TAG, "[" + currentDateTimeString + "] TX[byte]: " + value.toString());
+                Log.d(TAG, "[" + currentDateTimeString + "] TX[byteLength]: " + value.length);
             } catch (UnsupportedEncodingException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
@@ -44,8 +46,28 @@ public class BridgeConnectionBLE  extends Application {
         }
     }
 
-    public void sendCMD(String cmd, int adress){
-        String message = Integer.toHexString(adress) + cmd;
+    private void send(byte[] telegram){
+
+        //send data to service
+        mService.writeRXCharacteristic(telegram);
+        //Update the log with time stamp
+        String currentDateTimeString = DateFormat.getTimeInstance().format(new Date());
+        Log.d(TAG, "[" + currentDateTimeString + "] TX[byte]: " + telegram.toString());
+
+    }
+
+    public void sendCmdAdr(String cmd, int adress, int DAPC){
+        String message = String.valueOf(adress <<1 + DAPC) + cmd;
+        sendText(message);
+    }
+
+    public void sendCmdGrp(String cmd, int group, int DAPC){
+        String message = String.valueOf(DaliCommands.BROADCAST_ADRESS <<1 + DAPC) + cmd;
+        sendText(message);
+    }
+
+    public void sendBroadcast(String cmd, int DAPC){
+        String message = String.valueOf(DaliCommands.BROADCAST_ADRESS <<1 + DAPC) + cmd;
         sendText(message);
     }
 

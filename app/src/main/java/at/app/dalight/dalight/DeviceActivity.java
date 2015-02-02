@@ -14,7 +14,6 @@ import android.widget.TabHost;
 import android.widget.TextView;
 
 
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,11 +21,12 @@ import java.util.List;
 public class DeviceActivity extends Activity implements View.OnClickListener{
 
     // Definitions
-    public Button btnback1;
-    public Button btnInit;
+
     public TextView TextTypeName;
     public TextView TextAdressName;
     public TextView MainText;
+
+    public static Device selectedDevice = null;
 
     //ListView
     private ListView deviceListView_Actions;
@@ -72,11 +72,6 @@ public class DeviceActivity extends Activity implements View.OnClickListener{
         populateDeviceList();
         populateListViewDevice();
 
-
-        btnback1 = (Button) findViewById(R.id.btnback);
-        btnback1.setOnClickListener(this);
-
-
         //setzen der Texte, die mitübergeben wurden
         setTexts();
 
@@ -90,8 +85,7 @@ public class DeviceActivity extends Activity implements View.OnClickListener{
         TESTsendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //EditText editText = (EditText) findViewById(R.id.sendText);
-                ((BridgeConnectionBLE) getApplicationContext()).sendCMD(DaliCommands.OFF,1);
+                ((BridgeConnectionBLE) getApplicationContext()).sendCmdAdr(DaliCommands.OFF,selectedDevice.getAdress(),DaliCommands.DAPC_OFF);
             }
         });
     }
@@ -99,24 +93,11 @@ public class DeviceActivity extends Activity implements View.OnClickListener{
 
     public void setTexts()
     {
-        //Übergebene Daten ausgeben *********************************
-        final Bundle extras = getIntent().getExtras();
-
-        if (extras != null) {
-            MainText.setText(extras.getString("ClickedDevice"));
-            TextTypeName.setText("Device type: " + extras.getString("Type"));
-            TextAdressName.setText("Device adress: " + extras.getInt("Adress"));
-        }
-
+        MainText.setText(selectedDevice.getName());
+        TextTypeName.setText("Device type: " + selectedDevice.getType());
+        TextAdressName.setText("Device adress: " + selectedDevice.getAdress());
     }
-    /*  Wenn dieses Scheißdrecks-Ding aktiv ist, dann bleibt man da hängen---> geht nix
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_device, menu);
-        setContentView(R.layout.activity_device);
-        return true;
-    }*/
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -137,18 +118,10 @@ public class DeviceActivity extends Activity implements View.OnClickListener{
     @Override
     public void onClick(View v) {
 
-        /* just for debugg
-        String message = "Sollte geschlossen werden! ";
-        Toast.makeText(DeviceActivity.this, message,Toast.LENGTH_SHORT).show();
-        */
 
         //welcher Button wurde gedrückt??
         switch (v.getId()){
 
-            case    R.id.btnback:{
-                finish();   //Schließen der aktuellen aktivity
-                break;
-            }
 
         }
 

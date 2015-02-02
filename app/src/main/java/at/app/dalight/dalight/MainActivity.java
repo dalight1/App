@@ -28,7 +28,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.UnsupportedEncodingException;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -233,7 +232,7 @@ public class MainActivity extends Activity {
 
         //Main Button erzeugen
         mainButton = new FloatingActionButton.Builder(this)
-                .withDrawable(getResources().getDrawable(R.drawable.ic_ble))
+                .withDrawable(getResources().getDrawable(R.drawable.ic_ble_new))
                 .withButtonColor(getResources().getColor(R.color.Orange))
                 .withGravity(Gravity.BOTTOM | Gravity.RIGHT)
                 .withMargins(0, 0, 16, 16)
@@ -277,14 +276,9 @@ public class MainActivity extends Activity {
         deviceListView.setAdapter(adapter);
     }
     private void populateDeviceList() {
-        myDevices.add(new Device("DALI 1", R.drawable.ic_lamp_2,15,"LED"));
-        myDevices.add(new Device("DALI 2", R.drawable.ic_lamp_2,16));
-        myDevices.add(new Device("DALI 3", R.drawable.ic_lamp_2,1,"Typ1"));
-        myDevices.add(new Device("DALI 4", R.drawable.ic_lamp_2,10,"Typ1"));
-        myDevices.add(new Device("DALI 5", R.drawable.ic_lamp_2,2));
-        myDevices.add(new Device("DALI 6", R.drawable.ic_lamp_2,4));
-        myDevices.add(new Device("DALI 7", R.drawable.ic_lamp_2,11));
-        myDevices.add(new Device("DALI 8", R.drawable.ic_lamp_2,0));
+        for(int i=0; i<64; i++){
+            myDevices.add(new Device("Device "+ i, R.drawable.ic_lamp_2,i,"LED-Test"));
+        }
 
     }
     private void setHeader(String newText){
@@ -309,6 +303,7 @@ public class MainActivity extends Activity {
                 bridgeConnection.scan();
             }
         }
+
     }
 
     private void disconnectButtonClicked(View v){
@@ -334,24 +329,10 @@ public class MainActivity extends Activity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                 Device clickedDevive = myDevices.get(position);
-                //String message = "You Clicked " + position + " which ist string " + clickedDevive.getName();
-                //Toast.makeText(MainActivity.this, message, Toast.LENGTH_SHORT).show();
-
 
                 //Wechsel in die Device Activity
                 Intent intent = new Intent(MainActivity.this, DeviceActivity.class);
-
-                //ArrayList<Device> liste = clickedDevive.writeToParcel();
-
-                //Daten anhängen
-
-                //intent.putParcelableArrayListExtra("Data",clickedDevive.getClass());
-
-
-                intent.putExtra("ClickedDevice", clickedDevive.getName());
-                intent.putExtra("Type", clickedDevive.getType());
-                intent.putExtra("Adress", clickedDevive.getAdress());
-                intent.putExtra("extra", clickedDevive.getIconId());
+                DeviceActivity.selectedDevice = clickedDevive;
                 startActivity(intent);
             }
         });
@@ -418,6 +399,7 @@ public class MainActivity extends Activity {
                                 .getDrawable(R.drawable.ic_sync));
                         DisconnectButton.setVisibility(View.VISIBLE);
                         setHeader("Connected to " + mDevice.getName());
+                        populateDeviceList(); //ArrayList fill up
                         mState = UART_PROFILE_CONNECTED;
                     }
                 });
@@ -429,7 +411,7 @@ public class MainActivity extends Activity {
                     public void run() {
                         String currentDateTimeString = DateFormat.getTimeInstance().format(new Date());
                         Log.d(TAG, "UART_DISCONNECT_MSG");
-                        mainButton.setFloatingActionButtonDrawable(getResources().getDrawable(R.drawable.ic_ble));
+                        mainButton.setFloatingActionButtonDrawable(getResources().getDrawable(R.drawable.ic_ble_new));
                         DisconnectButton.setVisibility(View.INVISIBLE);
                         setHeader("Not Connected");
                         Toast.makeText(context,"Disconnected: "+ mDevice.getName(), Toast.LENGTH_LONG).show();
@@ -453,7 +435,7 @@ public class MainActivity extends Activity {
                         try {
                             String text = new String(txValue, "UTF-8");
                             String currentDateTimeString = DateFormat.getTimeInstance().format(new Date());
-                            Toast.makeText(context,"["+currentDateTimeString+"] RX: "+ text, Toast.LENGTH_LONG).show();
+                            Toast.makeText(context,"["+currentDateTimeString+"] RX: "+ text, Toast.LENGTH_SHORT).show();
                         } catch (Exception e) {
                             Log.e(TAG, e.toString());
                         }
