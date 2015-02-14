@@ -199,4 +199,16 @@ public class DaliCommands {
     public final static int BROADCAST_ADRESS= 254;
     public final static int DAPC_OFF= 1; //standard command
     public final static int DAPC_ON= 0; //direct arc power control (DAPC) command
+
+    public String getBrightness(int percent){
+        int maxBrightness = 254;
+        int output;
+
+        output =  (maxBrightness/percent)*100;
+
+        if (Integer.toHexString(output).length() < 2) return "0 " + Integer.toHexString(output);
+        else return Integer.toHexString(output);
+
+    }
+
 }

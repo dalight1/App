@@ -27,7 +27,7 @@ public class DeviceActivity extends Activity implements View.OnClickListener{
     public TextView MainText;
 
     public static Device selectedDevice = null;
-
+    private boolean onOff;
     //ListView
     private ListView deviceListView_Actions;
     //Extended ListView
@@ -72,20 +72,28 @@ public class DeviceActivity extends Activity implements View.OnClickListener{
         populateDeviceList();
         populateListViewDevice();
 
+        onOff = false;
+
         //setzen der Texte, die mitübergeben wurden
         setTexts();
 
         TESTsendButton = new FloatingActionButton.Builder(this)
-                .withDrawable(getResources().getDrawable(R.drawable.ic_lamp_1))
-                .withButtonColor(getResources().getColor(R.color.White))
-                .withGravity(Gravity.TOP | Gravity.RIGHT)
-                .withMargins(0, 16, 16, 0)
+                .withDrawable(getResources().getDrawable(R.drawable.ic_on_off))
+                .withButtonColor(getResources().getColor(R.color.Orange))
+                .withGravity(Gravity.BOTTOM | Gravity.RIGHT)
+                .withMargins(0, 0, 16, 16)
                 .create();
 
         TESTsendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((BridgeConnectionBLE) getApplicationContext()).sendCmdAdr(DaliCommands.OFF,selectedDevice.getAdress(),DaliCommands.DAPC_OFF);
+                if (onOff) {
+                    ((BridgeConnectionBLE) getApplicationContext()).sendCmdAdr(DaliCommands.OFF, selectedDevice.getAdress(), DaliCommands.DAPC_OFF);
+                    onOff = false;
+                }else {
+                    ((BridgeConnectionBLE) getApplicationContext()).sendCmdAdr("fe", selectedDevice.getAdress(), DaliCommands.DAPC_ON);
+                    onOff = true;
+                }
             }
         });
     }

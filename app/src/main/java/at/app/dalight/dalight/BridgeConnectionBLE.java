@@ -57,17 +57,23 @@ public class BridgeConnectionBLE  extends Application {
     }
 
     public void sendCmdAdr(String cmd, int adress, int DAPC){
-        String message = String.valueOf(adress <<1 + DAPC) + cmd;
+        //TODO: umbauen auf sauber nur für die Tests
+        String sadress;
+        Log.d(TAG, "Adresse: " + adress + "CMD: " + cmd);
+        if (adress <= 15) sadress = "0" + Integer.toHexString((adress <<1) + DAPC);
+        else sadress = Integer.toHexString(adress << + DAPC);
+
+        String message = sadress + cmd;
         sendText(message);
     }
 
     public void sendCmdGrp(String cmd, int group, int DAPC){
-        String message = String.valueOf(DaliCommands.BROADCAST_ADRESS <<1 + DAPC) + cmd;
+        String message = Integer.toHexString((DaliCommands.BROADCAST_ADRESS <<1 ) + DAPC) + cmd;
         sendText(message);
     }
 
     public void sendBroadcast(String cmd, int DAPC){
-        String message = String.valueOf(DaliCommands.BROADCAST_ADRESS <<1 + DAPC) + cmd;
+        String message = Integer.toHexString((DaliCommands.BROADCAST_ADRESS + DAPC)) + cmd;
         sendText(message);
     }
 

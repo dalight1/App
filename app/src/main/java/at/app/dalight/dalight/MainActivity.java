@@ -62,6 +62,7 @@ public class MainActivity extends Activity {
     private BluetoothDevice mDevice = null;
     private BluetoothAdapter mBtAdapter = null;
     private BridgeConnectionBLE bridgeConnection;
+    private boolean onOff = false;
 
 
     Context context;
@@ -301,6 +302,14 @@ public class MainActivity extends Activity {
 
             } else {
                 bridgeConnection.scan();
+                if (onOff) {
+                    bridgeConnection.sendBroadcast("fe",DaliCommands.DAPC_ON);
+                    onOff = false;
+                }
+                else{
+                    bridgeConnection.sendBroadcast("00",DaliCommands.DAPC_OFF);
+                    onOff = true;
+                }
             }
         }
 
@@ -396,10 +405,10 @@ public class MainActivity extends Activity {
                         String currentDateTimeString = DateFormat.getTimeInstance().format(new Date());
                         Log.d(TAG, "UART_CONNECT_MSG");
                         mainButton.setFloatingActionButtonDrawable(getResources()
-                                .getDrawable(R.drawable.ic_sync));
+                                .getDrawable(R.drawable.ic_on_off));
                         DisconnectButton.setVisibility(View.VISIBLE);
                         setHeader("Connected to " + mDevice.getName());
-                        populateDeviceList(); //ArrayList fill up
+                        //populateDeviceList(); //ArrayList fill up
                         mState = UART_PROFILE_CONNECTED;
                     }
                 });
